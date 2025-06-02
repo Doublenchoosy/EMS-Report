@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>65B Crew EMS Activity Report - April 2025</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #e74c3c;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #e74c3c;
+            font-size: 2.5em;
+            margin: 0;
+        }
+        .header p {
+            color: #666;
+            font-size: 1.2em;
+        }
+        .section {
+            margin: 30px 0;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .section h2 {
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+            padding-left: 10px;
+            border-left: 4px solid #e74c3c;
+        }
+        .section h3 {
+            color: #34495e;
+            font-size: 1.4em;
+            margin: 20px 0 10px 0;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .stat-box h4 {
+            margin: 0 0 10px 0;
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        .stat-box .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 0;
+        }
+        .chart-container {
+            margin: 30px 0;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            page-break-inside: avoid;
+        }
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+            margin: 20px 0;
+            page-break-inside: avoid;
+        }
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            table-layout: fixed;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            white-space: nowrap;
+        }
+        th {
+            background: #34495e;
+            color: white;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .alert-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .alert-box.critical {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .response-time {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .response-time.excellent { background: #d4edda; color: #155724; }
+        .response-time.good { background: #fff3cd; color: #856404; }
+        .response-time.needs-improvement { background: #f8d7da; color: #721c24; }
+        .crew-highlight {
+            background: #e3f2fd;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+        .backup-crew {
+            background: #fff3e0;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.9em;
+            color: #f57c00;
+        }
+        @media print {
+            body { background: white; }
+            .container { box-shadow: none; }
+            .chart-container {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            .chart-wrapper {
+                break-inside: avoid;
+                page-break-inside: avoid;
+                height: 300px !important;
+            }
+            .section {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+        }
+        .download-section {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .download-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s ease;
+        }
+        .download-btn:hover {
+            background: #c0392b;
+        }
+        @media print {
+            .download-section {
+                display: none;
+            }
+        }
+        .mutual-aid-section {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 25px;
+    border-radius: 10px;
+    margin: 30px 0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.mutual-aid-section h2 {
+    color: white;
+    border-left: 4px solid white;
+    margin-bottom: 20px;
+}
+
+.mutual-aid-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.mutual-aid-box {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 20px;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+}
+
+.mutual-aid-box:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.mutual-aid-box h4 {
+    margin: 0 0 15px 0;
+    font-size: 1.3em;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 10px;
+}
+
+.unit-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.unit-list li {
+    background: rgba(255, 255, 255, 0.1);
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 5px;
+    border-left: 3px solid rgba(255, 255, 255, 0.4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.unit-code {
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+.call-count {
+    background: rgba(255, 255, 255, 0.3);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.9em;
+    font-weight: bold;
+}
+
+.coverage-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.coverage-item {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.coverage-percentage {
+    font-size: 2em;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.coverage-label {
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+.backup-alert {
+    background: rgba(255, 193, 7, 0.9);
+    color: #333;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+    border-left: 4px solid #ffc107;
+}
+
+.backup-alert strong {
+    display: block;
+    margin-bottom: 5px;
+}
+    </style>
+</head>
+<body>
+    <div class="download-section">
+        <button class="download-btn" onclick="generatePDF()">Download PDF Report</button>
+    </div>
+    <div class="container">
+        <div class="header">
+            <h1>65B Crew EMS Activity Report</h1>
+            <p>Comprehensive Analysis for April 2025<br>
+            Department of Emergency Services, Westchester County<br>
+            DGROUP: KATNH</p>
+        </div>
+
+        <div class="section">
+            <h2>Executive Summary</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <h4>Total Incidents Responded</h4>
+                    <p class="number">89</p>
+                </div>
+                <div class="stat-box">
+                    <h4>65B Unit Deployments</h4>
+                    <p class="number">78</p>
+                </div>
+                <div class="stat-box">
+                    <h4>Coverage by Other Units</h4>
+                    <p class="number">11</p>
+                </div>
+                <div class="stat-box">
+                    <h4>Average Response Time</h4>
+                    <p class="number">8.2<span style="font-size:0.5em;">min</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>65B Unit Activity Breakdown</h2>
+            <div class="chart-container">
+                <h3>65B Unit Assignments by Type</h3>
+                <div class="chart-wrapper">
+                    <canvas id="unitTypeChart"></canvas>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <h4>65B1 Deployments</h4>
+                    <p class="number">12</p>
+                </div>
+                <div class="stat-box">
+                    <h4>65B2 Deployments</h4>
+                    <p class="number">18</p>
+                </div>
+                <div class="stat-box">
+                    <h4>65B3 Deployments</h4>
+                    <p class="number">48</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Call Type Analysis</h2>
+            <div class="chart-container">
+                <h3>Incident Types Distribution</h3>
+                <div class="chart-wrapper">
+                    <canvas id="callTypeChart"></canvas>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <h3>Detailed Call Type Breakdown</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Call Type</th>
+                            <th>65B Responses</th>
+                            <th>Other Unit Coverage</th>
+                            <th>Total</th>
+                            <th>65B Coverage %</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ALS (Advanced Life Support)</td>
+                            <td><span class="crew-highlight">38</span></td>
+                            <td><span class="backup-crew">2</span></td>
+                            <td>40</td>
+                            <td>95%</td>
+                        </tr>
+                        <tr>
+                            <td>BLS (Basic Life Support)</td>
+                            <td><span class="crew-highlight">8</span></td>
+                            <td><span class="backup-crew">0</span></td>
+                            <td>8</td>
+                            <td>100%</td>
+                        </tr>
+                        <tr>
+                            <td>MVA (Motor Vehicle Accident)</td>
+                            <td><span class="crew-highlight">14</span></td>
+                            <td><span class="backup-crew">0</span></td>
+                            <td>14</td>
+                            <td>100%</td>
+                        </tr>
+                        <tr>
+                            <td>MA (Medical Assist)</td>
+                            <td><span class="crew-highlight">16</span></td>
+                            <td><span class="backup-crew">9</span></td>
+                            <td>25</td>
+                            <td>64%</td>
+                        </tr>
+                        <tr>
+                            <td>ALARM (Medical Alarm)</td>
+                            <td><span class="crew-highlight">2</span></td>
+                            <td><span class="backup-crew">0</span></td>
+                            <td>2</td>
+                            <td>100%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Geographic Coverage Analysis</h2>
+            <div class="chart-container">
+                <h3>Responses by Location</h3>
+                <div class="chart-wrapper">
+                    <canvas id="locationChart"></canvas>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <h3>Top Response Locations</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>65B Responses</th>
+                            <th>Most Common Call Type</th>
+                            <th>Average Response Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>BEDFORDHILLS</td>
+                            <td><span class="crew-highlight">31</span></td>
+                            <td>ALS</td>
+                            <td><span class="response-time good">7.8 min</span></td>
+                        </tr>
+                        <tr>
+                            <td>KATONAH</td>
+                            <td><span class="crew-highlight">28</span></td>
+                            <td>ALS</td>
+                            <td><span class="response-time good">8.1 min</span></td>
+                        </tr>
+                        <tr>
+                            <td>BEDFORD</td>
+                            <td><span class="crew-highlight">8</span></td>
+                            <td>MVA</td>
+                            <td><span class="response-time excellent">6.9 min</span></td>
+                        </tr>
+                        <tr>
+                            <td>MT_KISCO</td>
+                            <td><span class="crew-highlight">8</span></td>
+                            <td>MA</td>
+                            <td><span class="response-time needs-improvement">9.4 min</span></td>
+                        </tr>
+                        <tr>
+                            <td>LEWISBORO</td>
+                            <td><span class="crew-highlight">3</span></td>
+                            <td>MVA</td>
+                            <td><span class="response-time good">8.3 min</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Response Time Performance</h2>
+            <div class="chart-container">
+                <h3>Daily Response Times</h3>
+                <div class="chart-wrapper">
+                    <canvas id="responseTimeChart"></canvas>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <h4>Best Response Time</h4>
+                    <p class="number">1.8<span style="font-size:0.5em;">min</span></p>
+                </div>
+                <div class="stat-box">
+                    <h4>Average Response Time</h4>
+                    <p class="number">8.2<span style="font-size:0.5em;">min</span></p>
+                </div>
+                <div class="stat-box">
+                    <h4>Longest Response Time</h4>
+                    <p class="number">22.7<span style="font-size:0.5em;">min</span></p>
+                </div>
+                <div class="stat-box">
+                    <h4>Target Met (<10min)</h4>
+                    <p class="number">67%</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Time-Based Activity Patterns</h2>
+            <div class="chart-container">
+                <h3>Calls by Hour of Day</h3>
+                <div class="chart-wrapper">
+                    <canvas id="hourlyChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Monthly Statistics Summary</h2>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Week</th>
+                            <th>Total Calls</th>
+                            <th>65B Responses</th>
+                            <th>Coverage Rate</th>
+                            <th>Avg Response Time</th>
+                            <th>Notable Events</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Week 1 (4/1-4/7)</td>
+                            <td>16</td>
+                            <td>15</td>
+                            <td>93.8%</td>
+                            <td>7.9 min</td>
+                            <td>MVA on SMRP</td>
+                        </tr>
+                        <tr>
+                            <td>Week 2 (4/8-4/14)</td>
+                            <td>18</td>
+                            <td>16</td>
+                            <td>88.9%</td>
+                            <td>8.3 min</td>
+                            <td>Multiple highway calls</td>
+                        </tr>
+                        <tr>
+                            <td>Week 3 (4/15-4/21)</td>
+                            <td>24</td>
+                            <td>20</td>
+                            <td>83.3%</td>
+                            <td>8.7 min</td>
+                            <td>High call volume</td>
+                        </tr>
+                        <tr>
+                            <td>Week 4 (4/22-4/28)</td>
+                            <td>22</td>
+                            <td>19</td>
+                            <td>86.4%</td>
+                            <td>8.1 min</td>
+                            <td>Major MVA I684</td>
+                        </tr>
+                        <tr>
+                            <td>Week 5 (4/29-4/30)</td>
+                            <td>9</td>
+                            <td>8</td>
+                            <td>88.9%</td>
+                            <td>7.6 min</td>
+                            <td>Extrication call</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>65B Unit Coverage & Mutual Aid Analysis</h2>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <h4>Calls Handled by 65B Units</h4>
+                <p class="number">78%</p>
+            </div>
+            <div class="stat-box">
+                <h4>Mutual Aid Required</h4>
+                <p class="number">22%</p>
+            </div>
+            <div class="stat-box">
+                <h4>Times Other Units Took Over</h4>
+                <p class="number">15</p>
+            </div>
+            <div class="stat-box">
+                <h4>Total Backup Units</h4>
+                <p class="number">4</p>
+            </div>
+        </div>
+
+        <div class="alert-box">
+            <strong>Key Mutual Aid Patterns:</strong> Most backup was needed during peak hours (10 AM - 6 PM) and for highway incidents requiring specialized rescue equipment. Mount Kisco units frequently assisted with calls near the border areas, while Bedford units provided coverage during simultaneous emergency situations.
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Coverage by Other Units Analysis</h2>
+        
+        <div class="stats-grid">
+            <div class="stat-box">
+                <h4>Incidents Requiring Coverage</h4>
+                <p class="number">11</p>
+            </div>
+            <div class="stat-box">
+                <h4>Mutual Aid Responses</h4>
+                <p class="number">20</p>
+            </div>
+            <div class="stat-box">
+                <h4>Avg Coverage Response</h4>
+                <p class="number">9.1<span style="font-size:0.5em;">min</span></p>
+            </div>
+            <div class="stat-box">
+                <h4>Mutual Aid Response</h4>
+                <p class="number">9.8<span style="font-size:0.5em;">min</span></p>
+            </div>
+        </div>
+
+        <div class="table-container">
+            <h3>Primary Coverage Units</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Unit</th>
+                        <th>Incidents Handled</th>
+                        <th>Primary Coverage Area</th>
+                        <th>Response Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="crew-highlight">45M Series</span></td>
+                        <td><span class="response-time excellent">9</span></td>
+                        <td>Katonah Area</td>
+                        <td>8.7 min</td>
+                    </tr>
+                    <tr>
+                        <td><span class="crew-highlight">40A Series</span></td>
+                        <td><span class="response-time good">3</span></td>
+                        <td>Bedford Area</td>
+                        <td>9.2 min</td>
+                    </tr>
+                    <tr>
+                        <td><span class="crew-highlight">89A1</span></td>
+                        <td><span class="response-time good">2</span></td>
+                        <td>Mount Kisco</td>
+                        <td>9.5 min</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-container">
+            <h3>Mutual Aid Response Units</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Unit</th>
+                        <th>Response Count</th>
+                        <th>Primary Area</th>
+                        <th>Response Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="crew-highlight">4000_ma</span></td>
+                        <td><span class="response-time excellent">12</span></td>
+                        <td>Bedford Hills</td>
+                        <td>9.6 min</td>
+                    </tr>
+                    <tr>
+                        <td><span class="crew-highlight">6500_ma</span></td>
+                        <td><span class="response-time good">8</span></td>
+                        <td>Regional</td>
+                        <td>9.9 min</td>
+                    </tr>
+                    <tr>
+                        <td><span class="crew-highlight">7000_ma</span></td>
+                        <td><span class="response-time good">3</span></td>
+                        <td>Highway</td>
+                        <td>10.2 min</td>
+                    </tr>
+                    <tr>
+                        <td><span class="crew-highlight">8000_ma</span></td>
+                        <td><span class="response-time good">4</span></td>
+                        <td>Regional</td>
+                        <td>9.8 min</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-container">
+            <h3>Coverage by Call Type</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Call Type</th>
+                        <th>Coverage Rate</th>
+                        <th>Primary Units</th>
+                        <th>Response Impact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Medical Assist (MA)</td>
+                        <td><span class="response-time needs-improvement">36%</span></td>
+                        <td>40A Series</td>
+                        <td>+1.8 min</td>
+                    </tr>
+                    <tr>
+                        <td>ALS</td>
+                        <td><span class="response-time excellent">5%</span></td>
+                        <td>45M Series</td>
+                        <td>+0.9 min</td>
+                    </tr>
+                    <tr>
+                        <td>BLS</td>
+                        <td><span class="response-time excellent">0%</span></td>
+                        <td>65B Only</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr>
+                        <td>MVA</td>
+                        <td><span class="response-time excellent">0%</span></td>
+                        <td>65B Only</td>
+                        <td>N/A</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="alert-box">
+            <strong>Coverage Patterns:</strong> Coverage was most frequently needed during peak hours (10 AM - 6 PM) and for overlapping emergency calls. Mount Kisco area incidents were primarily covered by 45M2, 89A1, and mutual aid units, while Bedford area backup was handled by 40A units and 45M1. Highway incidents (I684/SMRP) typically required 45M3, 45M4, and mutual aid support.
+        </div>
+    </div>
+
+    <script>
+        // Chart.js configurations
+        Chart.defaults.font.family = 'Arial, sans-serif';
+        Chart.defaults.color = '#333';
+        Chart.defaults.responsive = true;
+        Chart.defaults.maintainAspectRatio = false;
+
+        // Unit Type Chart
+        const unitTypeCtx = document.getElementById('unitTypeChart').getContext('2d');
+        new Chart(unitTypeCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['65B3 (Primary)', '65B2 (Secondary)', '65B1 (Backup)', 'Other Units'],
+                datasets: [{
+                    data: [48, 18, 12, 11],
+                    backgroundColor: ['#e74c3c', '#3498db', '#f39c12', '#95a5a6'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { 
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 20,
+                            padding: 15
+                        }
+                    },
+                    title: { 
+                        display: true, 
+                        text: '65B Unit Distribution (Total: 89 Incidents)',
+                        padding: 20
+                    }
+                }
+            }
+        });
+
+        // Call Type Chart
+        const callTypeCtx = document.getElementById('callTypeChart').getContext('2d');
+        new Chart(callTypeCtx, {
+            type: 'bar',
+            data: {
+                labels: ['ALS', 'MA/EMS', 'MVA', 'BLS', 'ALARM', 'OTHER'],
+                datasets: [
+                    {
+                        label: '65B Responses',
+                        data: [38, 16, 14, 8, 2, 0],
+                        backgroundColor: '#e74c3c',
+                        borderColor: '#c0392b',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Other Unit Coverage',
+                        data: [2, 9, 0, 0, 0, 0],
+                        backgroundColor: '#f39c12',
+                        borderColor: '#d35400',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        title: { 
+                            display: true, 
+                            text: 'Number of Calls',
+                            padding: 10
+                        }
+                    },
+                    x: { 
+                        title: { 
+                            display: true, 
+                            text: 'Call Type',
+                            padding: 10
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { 
+                        position: 'top',
+                        labels: {
+                            boxWidth: 20,
+                            padding: 15
+                        }
+                    },
+                    title: { 
+                        display: true, 
+                        text: 'Call Type Distribution and Coverage',
+                        padding: 20
+                    }
+                }
+            }
+        });
+
+        // Location Chart
+        const locationCtx = document.getElementById('locationChart').getContext('2d');
+        new Chart(locationCtx, {
+            type: 'pie',
+            data: {
+                labels: ['BEDFORDHILLS', 'KATONAH', 'MT_KISCO', 'BEDFORD', 'LEWISBORO', 'OTHER'],
+                datasets: [{
+                    data: [31, 28, 8, 8, 3, 11],
+                    backgroundColor: ['#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6', '#95a5a6'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { 
+                        position: 'right',
+                        labels: {
+                            boxWidth: 20,
+                            padding: 15
+                        }
+                    },
+                    title: { 
+                        display: true, 
+                        text: '65B Responses by Geographic Location',
+                        padding: 20
+                    }
+                }
+            }
+        });
+
+        // Response Time Chart
+        const responseTimeCtx = document.getElementById('responseTimeChart').getContext('2d');
+        new Chart(responseTimeCtx, {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 30}, (_, i) => `4/${i+1}`),
+                datasets: [{
+                    label: 'Daily Average Response Time (minutes)',
+                    data: [8.1, 9.2, 7.8, 8.5, 7.9, 8.2, 7.6, 8.8, 9.1, 8.3, 7.9, 8.4, 8.7, 9.3, 8.1, 7.8, 8.6, 8.2, 8.9, 7.7, 8.4, 8.1, 7.9, 8.6, 8.3, 7.8, 8.7, 8.2, 7.9, 8.1],
+                    borderColor: '#e74c3c',
+                    backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { 
+                        beginAtZero: true, 
+                        title: { 
+                            display: true, 
+                            text: 'Response Time (minutes)',
+                            padding: 10
+                        },
+                        suggestedMax: 12
+                    },
+                    x: { 
+                        title: { 
+                            display: true, 
+                            text: 'Date',
+                            padding: 10
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { 
+                        position: 'top',
+                        labels: {
+                            boxWidth: 20,
+                            padding: 15
+                        }
+                    },
+                    title: { 
+                        display: true, 
+                        text: 'Daily Response Times - April 2025',
+                        padding: 20
+                    }
+                }
+            }
+        });
+
+        // Hourly Chart
+        const hourlyCtx = document.getElementById('hourlyChart').getContext('2d');
+        new Chart(hourlyCtx, {
+            type: 'bar',
+            data: {
+                labels: Array.from({length: 24}, (_, i) => `${i}:00`),
+                datasets: [{
+                    label: 'Number of Calls',
+                    data: [2, 1, 0, 1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 4, 5, 4, 3, 2, 1],
+                    backgroundColor: '#3498db',
+                    borderColor: '#2980b9',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { 
+                            display: true, 
+                            text: 'Number of Calls',
+                            padding: 10
+                        }
+                    },
+                    x: {
+                        title: { 
+                            display: true, 
+                            text: 'Hour of Day',
+                            padding: 10
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { 
+                        position: 'top',
+                        labels: {
+                            boxWidth: 20,
+                            padding: 15
+                        }
+                    },
+                    title: { 
+                        display: true, 
+                        text: 'Call Distribution by Hour',
+                        padding: 20
+                    }
+                }
+            }
+        });
+
+        // PDF Generation Function
+        function generatePDF() {
+            const element = document.querySelector('.container');
+            const opt = {
+                margin: [0.5, 0.5, 0.5, 0.5], // [top, left, bottom, right] margins in inches
+                filename: '65B_Crew_EMS_Report_April_2025.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2,
+                    useCORS: true,
+                    logging: true,
+                    allowTaint: true,
+                    foreignObjectRendering: true,
+                    windowWidth: 1200, // Set a fixed width
+                    onclone: function(clonedDoc) {
+                        // Ensure all charts are properly rendered in the cloned document
+                        const charts = clonedDoc.querySelectorAll('canvas');
+                        charts.forEach(canvas => {
+                            const chart = Chart.getChart(canvas);
+                            if (chart) {
+                                chart.draw();
+                            }
+                        });
+
+                        // Adjust chart container heights for PDF
+                        const chartWrappers = clonedDoc.querySelectorAll('.chart-wrapper');
+                        chartWrappers.forEach(wrapper => {
+                            wrapper.style.height = '300px'; // Fixed height for PDF
+                            wrapper.style.pageBreakInside = 'avoid';
+                        });
+
+                        // Ensure sections don't break across pages
+                        const sections = clonedDoc.querySelectorAll('.section');
+                        sections.forEach(section => {
+                            section.style.pageBreakInside = 'avoid';
+                        });
+                    }
+                },
+                jsPDF: { 
+                    unit: 'in', 
+                    format: 'a4', 
+                    orientation: 'portrait',
+                    compress: true
+                }
+            };
+
+            // Show loading state
+            const btn = document.querySelector('.download-btn');
+            const originalText = btn.textContent;
+            btn.textContent = 'Generating PDF...';
+            btn.disabled = true;
+
+            // Add a small delay to ensure charts are fully rendered
+            setTimeout(() => {
+                // Generate PDF
+                html2pdf().set(opt).from(element).save().then(() => {
+                    // Reset button state
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                }).catch(err => {
+                    console.error('PDF generation failed:', err);
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                    alert('PDF generation failed. Please try again.');
+                });
+            }, 1500); // Increased delay to ensure better rendering
+        }
+    </script>
+</body>
+</html>
